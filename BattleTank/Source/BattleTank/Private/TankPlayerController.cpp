@@ -2,6 +2,9 @@
 
 #include "TankPlayerController.h"
 
+#include "Tank.h"
+#include "Engine/World.h"
+
 void ATankPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
