@@ -2,12 +2,14 @@
 
 #include "TankAimingComponent.h"
 
-#include "GameFramework/Actor.h"
+//#include "GameFramework/Actor.h"
 #include "Components/StaticMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h" /// Added for logging of time
 
 #include "TankBarrel.h"
+
+#include "GameFramework/Actor.h"
 
 // Sets default values for this component's properties
 UTankAimingComponent::UTankAimingComponent()
@@ -26,6 +28,10 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 	FVector OutLaunchVelocity;
 	FVector StartLocation = Barrel->GetSocketLocation(FName("Projectile"));
 
+	//TArray<AActor*> ActorIgnoreList;
+	//ActorIgnoreList.Add(GetOwner());
+	//ActorIgnoreList.Add(GetWorld()->GetFirstPlayerController()->GetPawn());
+	auto TankName = Barrel->GetOwner()->GetName();
 
 	// Calculate the OutLaunchVelocity
 	bool bHaveAimSolution = UGameplayStatics::SuggestProjectileVelocity(
@@ -34,7 +40,10 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 		StartLocation,
 		HitLocation,
 		LaunchSpeed,
-		ESuggestProjVelocityTraceOption::DoNotTrace
+		false,
+		0.0f,
+		0.0f,
+		ESuggestProjVelocityTraceOption::OnlyTraceWhileAscending
 	);
 	
 	if (bHaveAimSolution)
@@ -42,12 +51,12 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 		FVector AimDirection = OutLaunchVelocity.GetSafeNormal();
 		MoveBarrelTowards(AimDirection);
 		auto Time = GetWorld()->GetTimeSeconds();
-		UE_LOG(LogTemp, Warning, TEXT("%f: Found solution."), Time)
+		UE_LOG(LogTemp, Warning, TEXT("%f: %s found solution."), Time, *TankName)
 	}
 	else
 	{
 		auto Time = GetWorld()->GetTimeSeconds();
-		UE_LOG(LogTemp, Warning, TEXT("%f: No aim solution found."), Time)
+		UE_LOG(LogTemp, Warning, TEXT("%f: %s reports no aim solution found."), Time, *TankName)
 	}
 }
 
