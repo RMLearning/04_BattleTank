@@ -11,8 +11,6 @@ void ATankPlayerController::BeginPlay()
 
 	auto ControlledTank = GetControlledTank();
 
-	UE_LOG(LogTemp, Warning, TEXT("PlayerController Begin Play"));
-
 	if (!ControlledTank)
 	{
 		UE_LOG(LogTemp, Error, TEXT("PlayerController not possessing a tank"));
@@ -38,7 +36,7 @@ void ATankPlayerController::AimTowardsCrosshair()
 {
 	if (!GetControlledTank()) { return; }
 
-	FVector HitLocation = FVector(0); // Out parameter
+	FVector HitLocation; // Out parameter
 
 	if (GetSightRayHitLocation(HitLocation))
 	{
@@ -61,13 +59,6 @@ bool ATankPlayerController::GetSightRayHitLocation(FVector& OutHitLocation) cons
 		//Line-trace along that look direction, and see what is hit (up to max range)
 		GetLookVectorHitLocation(LookDirection, OutHitLocation);
 	}
-
-	// check if crosshair is pointed at a valid region of the map
-	// if it is
-	//		then set OutHitLocation to a linetrace location of region where crosshair is pointed
-	//		return true
-	// else
-	//		then return false
 
 	return true;
 }
@@ -102,5 +93,6 @@ bool ATankPlayerController::GetLookVectorHitLocation(FVector LookDirection, FVec
 		return true;
 	}
 
+	OutHitLocation = FVector(0);
 	return false; 
 }

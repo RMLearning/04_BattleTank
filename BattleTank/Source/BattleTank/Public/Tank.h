@@ -8,6 +8,7 @@
 
 class UTankAimingComponent;
 class UTankBarrel; // repeat Forward Declaration from TankAimingComponent.h
+class UTankTurrent;
 
 UCLASS()
 class BATTLETANK_API ATank : public APawn
@@ -23,6 +24,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Setup")
 	void SetBarrelReference(UTankBarrel* BarrelToSet);
 
+	UFUNCTION(BlueprintCallable, Category="Setup")
+	void SetTurrentReference(UTankTurrent* TurrentToSet);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -35,6 +39,6 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UPROPERTY(EditAnywhere, Category = "Firing")
-	float LaunchSpeed = 100000.0f;
+	float LaunchSpeed = 4000.0f;
 	
 };

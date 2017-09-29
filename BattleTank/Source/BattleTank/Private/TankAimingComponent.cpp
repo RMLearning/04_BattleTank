@@ -8,6 +8,7 @@
 #include "Engine/World.h" /// Added for logging of time
 
 #include "TankBarrel.h"
+#include "TankTurrent.h"
 
 #include "GameFramework/Actor.h"
 
@@ -16,22 +17,30 @@ UTankAimingComponent::UTankAimingComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
 }
 
+void UTankAimingComponent::SetBarrelReference(UTankBarrel * BarrelToSet)
+{
+	if (!BarrelToSet) { return; }
+	Barrel = BarrelToSet;
+}
+
+void UTankAimingComponent::SetTurrentReference(UTankTurrent * TurrentToSet)
+{
+	if (!TurrentToSet) { return; }
+	Turrent = TurrentToSet;
+}
 
 void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 {
 	if (!Barrel) { return; }
+	if (!Turrent) { return; }
+
 	FVector OutLaunchVelocity;
 	FVector StartLocation = Barrel->GetSocketLocation(FName("Projectile"));
-
-	//TArray<AActor*> ActorIgnoreList;
-	//ActorIgnoreList.Add(GetOwner());
-	//ActorIgnoreList.Add(GetWorld()->GetFirstPlayerController()->GetPawn());
-	auto TankName = Barrel->GetOwner()->GetName();
 
 	// Calculate the OutLaunchVelocity
 	bool bHaveAimSolution = UGameplayStatics::SuggestProjectileVelocity(
@@ -43,60 +52,32 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 		false,
 		0.0f,
 		0.0f,
-		ESuggestProjVelocityTraceOption::DoNotTrace
+		ESuggestProjVelocityTraceOption::OnlyTraceWhileAscending
 	);
 	
 	if (bHaveAimSolution)
 	{
 		FVector AimDirection = OutLaunchVelocity.GetSafeNormal();
 		MoveBarrelTowards(AimDirection);
-		auto Time = GetWorld()->GetTimeSeconds();
-		//UE_LOG(LogTemp, Warning, TEXT("%f: %s found solution."), Time, *TankName)
 	}
 	else
 	{
-		auto Time = GetWorld()->GetTimeSeconds();
-		UE_LOG(LogTemp, Warning, TEXT("%f: %s reports no aim solution found."), Time, *TankName)
+		UE_LOG(LogTemp, Warning, TEXT("No aim solution"))
+		MoveBarrelTowards(FVector(0));
 	}
-}
-
-// Called when the game starts
-void UTankAimingComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
-	// ...
-	
 }
 
 void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 {
-		// My solution
-		// Move Barrel
-		// determine new location of barrel based on where it is aiming towards
-		// rotate the turrent (which moves the barrel) till the barrel is at the correct x/y coordiant
-		// elevate the barrel on z based on the angle of the shot
-
 	// His Solution
 	// Work-out difference between current barrel rotation, and AimDirection
 	auto BarrelRotator = Barrel->GetForwardVector().Rotation();
 	auto AimAsRotator = AimDirection.Rotation();
 	auto DeltaRotator = AimAsRotator - BarrelRotator;
 	
-	Barrel->Elevate(DeltaRotator.Pitch);//TODO: Remove 'magic number'
+	Barrel->Elevate(DeltaRotator.Pitch);
+	Turrent->Rotate(DeltaRotator.Yaw);
 }
 
 
-void UTankAimingComponent::SetBarrelReference(UTankBarrel * BarrelToSet)
-{
-	Barrel = BarrelToSet;
-}
-
-// Called every frame
-void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
 
