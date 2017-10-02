@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Tank.h"
-
+#include "Engine/World.h"
 #include "TankAimingComponent.h"
 
 // Sets default values
@@ -26,6 +26,12 @@ void ATank::SetBarrelReference(UTankBarrel * BarrelToSet)
 void ATank::SetTurrentReference(UTankTurrent * TurrentToSet)
 {
 	TankAimingComponent->SetTurrentReference(TurrentToSet);
+}
+
+void ATank::Fire()
+{
+	auto Time = GetWorld()->GetTimeSeconds();
+	UE_LOG(LogTemp, Warning, TEXT("%f: Tank Fired."), Time)
 }
 
 // Called when the game starts or when spawned
