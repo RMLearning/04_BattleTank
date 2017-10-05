@@ -8,6 +8,7 @@ public class BattleTankTarget : TargetRules
 	public BattleTankTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Game;
+        bUsesSteam = true;
 
 		ExtraModuleNames.AddRange( new string[] { "BattleTank" } );
 	}
