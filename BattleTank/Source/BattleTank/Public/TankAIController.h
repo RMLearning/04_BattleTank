@@ -20,4 +20,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+private:
+	float AcceptanceRadius = 3000.0f;
 };
