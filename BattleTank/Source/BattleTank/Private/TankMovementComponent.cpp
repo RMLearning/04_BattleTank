@@ -27,11 +27,7 @@ void UTankMovementComponent::IntendTurnRight(float Throw)
 }
 
 void UTankMovementComponent::RequestDirectMove(const FVector & MoveVelocity, bool bForceMaxSpeed)
-{
-	//auto Name = GetOwner()->GetName();
-	//auto Time = GetWorld()->GetTimeSeconds();
-	//UE_LOG(LogTemp, Warning, TEXT("%f: %s Move Velocity %s"), Time, *Name, *MoveVelocityNormal.ToString())
-	
+{	
 	/// Set the movement of the AI tanks
 	auto AIForwardIntention = MoveVelocity.GetSafeNormal();
 	auto TankForward = GetOwner()->GetActorForwardVector().GetSafeNormal();
