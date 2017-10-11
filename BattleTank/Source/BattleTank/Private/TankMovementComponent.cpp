@@ -31,7 +31,16 @@ void UTankMovementComponent::RequestDirectMove(const FVector & MoveVelocity, boo
 	//auto Name = GetOwner()->GetName();
 	//auto Time = GetWorld()->GetTimeSeconds();
 	//UE_LOG(LogTemp, Warning, TEXT("%f: %s Move Velocity %s"), Time, *Name, *MoveVelocityNormal.ToString())
+	
+	/// Set the movement of the AI tanks
 	auto AIForwardIntention = MoveVelocity.GetSafeNormal();
 	auto TankForward = GetOwner()->GetActorForwardVector().GetSafeNormal();
-	IntendMoveForward(FVector::DotProduct(AIForwardIntention, TankForward));
+	
+	/// Dot Product is used for forward / back movement
+	auto ForwardThrow = FVector::DotProduct(TankForward, AIForwardIntention);
+	IntendMoveForward(ForwardThrow);
+
+	/// Cross Product is used for turning movement - Z determines direction
+	auto RightThrow = FVector::CrossProduct(TankForward, AIForwardIntention).Z;
+	IntendTurnRight(RightThrow);
 }
