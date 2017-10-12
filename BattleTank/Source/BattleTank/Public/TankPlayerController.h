@@ -22,8 +22,10 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-private:
+	UFUNCTION(BlueprintCallable, Category = "Setup")
 	ATank* GetControlledTank() const;
+
+private:
 
 	// Start the tank moving the barel so that a shot would
 	// hit where the crosshair intersects with the world.
