@@ -7,7 +7,6 @@
 #include "Tank.generated.h"
 
 class UTankAimingComponent;
-class UTankMovementComponent;
 class UTankBarrel; // repeat Forward Declaration from TankAimingComponent.h
 class UTankTurrent;
 class AProjectile;
@@ -29,9 +28,6 @@ public:
 protected:
 	UPROPERTY(BlueprintReadOnly)
 	UTankAimingComponent *TankAimingComponent = nullptr;
-
-	UPROPERTY(BlueprintReadOnly)
-	UTankMovementComponent *TankMovementComponent = nullptr;
 
 public:	
 	UPROPERTY(EditDefaultsOnly, Category = "Firing")
