@@ -13,14 +13,13 @@
 
 #include "GameFramework/Actor.h"
 
-void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
+// Sets default values for this component's properties
+UTankAimingComponent::UTankAimingComponent()
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	if ((GetWorld()->GetTimeSeconds() - LastFireTime) > ReloadTimeInSeconds) {
-		FiringStatus = EFiringStatus::Reloading;
-	}
-	// TODO: Handle aiming and locked states
+	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
+	// off to improve performance if you don't need them.
+	PrimaryComponentTick.bCanEverTick = true;
+	// ...
 }
 
 void UTankAimingComponent::BeginPlay()
@@ -29,20 +28,36 @@ void UTankAimingComponent::BeginPlay()
 	LastFireTime = GetWorld()->GetTimeSeconds();
 }
 
-// Sets default values for this component's properties
-UTankAimingComponent::UTankAimingComponent()
-{
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = false;
-
-	// ...
-}
-
 void UTankAimingComponent::Initialize(UTankBarrel* BarrelToSet, UTankTurrent* TurrentToSet)
 {
 	Barrel = BarrelToSet;
 	Turrent = TurrentToSet;
+}
+
+void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
+{
+	UE_LOG(LogTemp, Warning, TEXT("TickComponent"))
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if ((GetWorld()->GetTimeSeconds() - LastFireTime) < ReloadTimeInSeconds) {
+		FiringStatus = EFiringStatus::Reloading;
+		UE_LOG(LogTemp, Warning, TEXT("Reloading"))
+	}
+	else if (IsBarrelMoving()) {
+		FiringStatus = EFiringStatus::Aiming;
+		UE_LOG(LogTemp, Warning, TEXT("Aiming"))
+	}
+	else {
+		FiringStatus = EFiringStatus::Locked;
+		UE_LOG(LogTemp, Warning, TEXT("Locked"))
+	}
+}
+
+bool UTankAimingComponent::IsBarrelMoving()
+{
+	if (!ensure(Barrel)) { return false; }
+	auto BarrelForward = Barrel->GetForwardVector();
+
+	return !BarrelForward.Equals(AimDirection, 0.01);
 }
 
 void UTankAimingComponent::AimAt(FVector HitLocation)
@@ -62,12 +77,12 @@ void UTankAimingComponent::AimAt(FVector HitLocation)
 		false,
 		0.0f,
 		0.0f,
-		ESuggestProjVelocityTraceOption::OnlyTraceWhileAscending
+		ESuggestProjVelocityTraceOption::DoNotTrace
 	);
 	
 	if (bHaveAimSolution)
 	{
-		FVector AimDirection = OutLaunchVelocity.GetSafeNormal();
+		AimDirection = OutLaunchVelocity.GetSafeNormal();
 		MoveBarrelTowards(AimDirection);
 	}
 }
