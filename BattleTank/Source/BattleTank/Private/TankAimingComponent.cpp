@@ -13,6 +13,22 @@
 
 #include "GameFramework/Actor.h"
 
+void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if ((GetWorld()->GetTimeSeconds() - LastFireTime) > ReloadTimeInSeconds) {
+		FiringStatus = EFiringStatus::Reloading;
+	}
+	// TODO: Handle aiming and locked states
+}
+
+void UTankAimingComponent::BeginPlay()
+{
+	Super::BeginPlay();
+	LastFireTime = GetWorld()->GetTimeSeconds();
+}
+
 // Sets default values for this component's properties
 UTankAimingComponent::UTankAimingComponent()
 {
@@ -58,7 +74,7 @@ void UTankAimingComponent::AimAt(FVector HitLocation)
 
 void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 {
-	if (!ensure(Barrel && Turrent)) { return; }
+	if (!ensure(Barrel) && !ensure(Turrent)) { return; }
 
 	// His Solution
 	// Work-out difference between current barrel rotation, and AimDirection
@@ -72,14 +88,10 @@ void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 
 void UTankAimingComponent::Fire()
 {
-	if (!ensure(Barrel) && !ensure(ProjectileBlueprint)) { return; }
-
-	auto Time = GetWorld()->GetTimeSeconds();
-	bool bIsReloaded = (Time - LastFireTime) > ReloadTimeInSeconds;
-
-	if (bIsReloaded)
+	if (FiringStatus != EFiringStatus::Reloading)
 	{
-
+		if (!ensure(Barrel) && !ensure(ProjectileBlueprint)) { return; }
+		
 		// Spawn a projectile at the socket location on the barrel
 		auto Projectile = GetWorld()->SpawnActor<AProjectile>(
 			ProjectileBlueprint,
@@ -89,7 +101,7 @@ void UTankAimingComponent::Fire()
 
 		Projectile->LaunchProjetile(LaunchSpeed);
 
-		LastFireTime = Time;
+		LastFireTime = GetWorld()->GetTimeSeconds();
 	}
 }
 
