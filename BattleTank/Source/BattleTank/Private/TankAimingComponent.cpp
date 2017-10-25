@@ -36,19 +36,15 @@ void UTankAimingComponent::Initialize(UTankBarrel* BarrelToSet, UTankTurrent* Tu
 
 void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
 {
-	UE_LOG(LogTemp, Warning, TEXT("TickComponent"))
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	if ((GetWorld()->GetTimeSeconds() - LastFireTime) < ReloadTimeInSeconds) {
 		FiringStatus = EFiringStatus::Reloading;
-		UE_LOG(LogTemp, Warning, TEXT("Reloading"))
 	}
 	else if (IsBarrelMoving()) {
 		FiringStatus = EFiringStatus::Aiming;
-		UE_LOG(LogTemp, Warning, TEXT("Aiming"))
 	}
 	else {
 		FiringStatus = EFiringStatus::Locked;
-		UE_LOG(LogTemp, Warning, TEXT("Locked"))
 	}
 }
 
