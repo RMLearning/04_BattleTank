@@ -23,7 +23,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	float TrackMaxDrivingForce = 400000; // assume 40t mass tank, 1g acceleration
 
-	virtual void TickComponent( float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction ) override;
+	void ApplySidewaysForce();
+	void DriveTrack(  );
 
 protected:
 	// Called when the game starts or when spawned
@@ -36,4 +37,6 @@ private:
 	
 	UFUNCTION()
 	void OnHit( UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit );
+
+	float CurrentThrottle = 0;
 };
