@@ -28,7 +28,7 @@ void UTankTrack::OnRegister()
 void UTankTrack::OnHit( UPrimitiveComponent * HitComponent, AActor * OtherActor, UPrimitiveComponent * OtherComponent, FVector NormalImpulse, const FHitResult & Hit )
 {
 	//GLog->Log( TEXT( "Track Hit" ) );
-	UE_LOG( LogTemp, Warning, TEXT( "Track Hit" ) )
+	//UE_LOG( LogTemp, Warning, TEXT( "Track Hit" ) )
 
 	// Drive the tracks
 	DriveTrack();
