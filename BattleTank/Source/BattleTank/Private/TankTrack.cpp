@@ -4,6 +4,30 @@
 #include "GameFramework/Actor.h"
 #include "Components/PrimitiveComponent.h"
 
+UTankTrack::UTankTrack()
+{
+	PrimaryComponentTick.bCanEverTick = true;
+}
+
+void UTankTrack::BeginPlay()
+{
+	Super::BeginPlay();
+
+	OnComponentHit.AddDynamic( this, &UTankTrack::OnHit );
+}
+
+void UTankTrack::OnRegister()
+{
+	Super::OnRegister();
+	PrimaryComponentTick.bCanEverTick = true;
+}
+
+void UTankTrack::OnHit( UPrimitiveComponent * HitComponent, AActor * OtherActor, UPrimitiveComponent * OtherComponent, FVector NormalImpulse, const FHitResult & Hit )
+{
+	//GLog->Log( TEXT( "Track Hit" ) );
+	UE_LOG(LogTemp, Warning, TEXT("Track Hit"))
+}
+
 void UTankTrack::TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction )
 {
 	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
@@ -18,21 +42,10 @@ void UTankTrack::TickComponent( float DeltaTime, ELevelTick TickType, FActorComp
 	TankRoot->AddForce( CorrectionForce );
 }
 
-UTankTrack::UTankTrack()
-{
-	PrimaryComponentTick.bCanEverTick = true;
-}
-
 void UTankTrack::SetThrottle(float Throttle)
 {	
 	auto ForceApplied = GetForwardVector() * Throttle * TrackMaxDrivingForce;
 	auto ForceLocation = GetComponentLocation();
 	auto TankRoot = Cast<UPrimitiveComponent>(GetOwner()->GetRootComponent());
 	TankRoot->AddForceAtLocation(ForceApplied, ForceLocation);
-}
-
-void UTankTrack::OnRegister()
-{
-	Super::OnRegister();
-	PrimaryComponentTick.bCanEverTick = true;
 }
