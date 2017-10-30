@@ -20,6 +20,8 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-private:
+	UPROPERTY( EditDefaultsOnly, Category = "Setup" )
 	float AcceptanceRadius = 3000.0f;
+
+private:
 };
