@@ -17,7 +17,7 @@ AProjectile::AProjectile()
 	CollisionMesh->SetVisibility( false );
 
 	LaunchBlast = CreateDefaultSubobject<UParticleSystemComponent>( FName( "Launch Blast" ) );
-	LaunchBlast->AttachTo( RootComponent );
+	LaunchBlast->AttachToComponent( RootComponent, FAttachmentTransformRules::KeepRelativeTransform );
 
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(FName("Projectile Movement"));
 	ProjectileMovement->bAutoActivate = false;
@@ -42,4 +42,3 @@ void AProjectile::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
-

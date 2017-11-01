@@ -73,7 +73,3 @@ Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
-
-# Unreal Content Pack
-BattleTank/Content/StarterContent/*
-
