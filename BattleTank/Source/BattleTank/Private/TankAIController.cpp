@@ -32,7 +32,8 @@ void ATankAIController::SetPawn( APawn * InPawn )
 
 void ATankAIController::OnPossedTankDeath()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Received"))
+	if ( !GetPawn() ) { return; }
+	GetPawn()->DetachFromControllerPendingDestroy();
 }
 
 void ATankAIController::Tick(float DeltaTime)
@@ -42,6 +43,11 @@ void ATankAIController::Tick(float DeltaTime)
 	auto PlayerTank = GetWorld()->GetFirstPlayerController()->GetPawn();
 	auto ControlledTank = GetPawn();
 
+	if ( !PlayerTank )
+	{
+		UE_LOG( LogTemp, Warning, TEXT( "NoPlayer" ) )
+		return;
+	}
 	if (!ensure(PlayerTank) && !ensure(ControlledTank)) { return; }
 
 	// Move towards the player
@@ -50,8 +56,8 @@ void ATankAIController::Tick(float DeltaTime)
 	// Aim towards the player
 	auto AimingComponent = GetPawn()->FindComponentByClass<UTankAimingComponent>();
 	if (!ensure(AimingComponent)) { return; }
-
-	AimingComponent->AimAt(PlayerTank->GetActorLocation());
+	
+	AimingComponent->AimAt( PlayerTank->GetActorLocation() );
 
 	// if aim or locked 
 	if ( AimingComponent->GetFiringState() == EFiringStatus::Locked )
