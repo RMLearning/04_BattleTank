@@ -22,6 +22,8 @@ public:
 
 	void LaunchProjetile(float Speed);
 
+	float GetProjectileDamage() { return ProjectileDamage; }
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -35,7 +37,10 @@ private:
 	UProjectileMovementComponent *ProjectileMovement = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	float DestroyDelay = 10.0;
+	float DestroyDelay = 10.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	float ProjectileDamage = 20.f;
 
 	void OnTimerExpire();
 
