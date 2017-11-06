@@ -20,8 +20,13 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	virtual void SetPawn( APawn* InPawn ) override;
+
 	UPROPERTY( EditDefaultsOnly, Category = "Setup" )
 	float AcceptanceRadius = 3000.0f;
 
 private:
+	UFUNCTION()
+	void OnPossedTankDeath();
+
 };
